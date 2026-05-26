@@ -1,0 +1,17 @@
+FROM alpine:latest
+RUN \
+    echo "Installing basic utils ..." && \
+    apk add nano && \
+    apk add bash
+RUN \
+    echo "Installing MySQL (MariaDB)..." && \
+    apk add mysql mysql-client
+RUN \
+    echo "Modifying MySQL config ..." && \
+    sed -i 's/\#bind\-address/bind\-address/g' /etc/my.cnf.d/mariadb-server.cnf && \
+    sed -i 's/skip-networking/\#skip-networking/g' /etc/my.cnf.d/mariadb-server.cnf && \
+    mkdir /run/mysqld && \
+    touch /run/mysqld/mysqld.sock && \
+    chown -R mysql /run/mysqld/
+WORKDIR /repo
+ENTRYPOINT /tmp/startup.sh

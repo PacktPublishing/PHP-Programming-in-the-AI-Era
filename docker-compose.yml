@@ -1,0 +1,70 @@
+services:
+  nginx:
+    container_name: nginx
+    hostname: nginx
+    image: unlikelysource/nginx_img
+    ports:
+    - 8888:80
+    volumes:
+     - ".:/repo"
+     - "./docker/secrets.sh:/tmp/secrets.sh"
+     - "./docker/nginx.startup.sh:/tmp/startup.sh"
+     - "./docker/nginx.default.conf:/etc/nginx/http.d/default.conf"
+     - "./docker/symfony.test.conf:/etc/nginx/http.d/symfony.test.conf"
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.NGINX
+    working_dir: /repo
+    command: /tmp/startup.sh
+    restart: always
+    networks:
+      php8cookbook_net:
+        ipv4_address: 10.10.90.10
+        
+  mysql:
+    container_name: mysql
+    hostname: mysql
+    image: unlikelysource/mysql_img
+    ports:
+    - 3306:3306
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.MySQL
+    volumes:
+     - ".:/repo"
+     - "./docker/secrets.sh:/tmp/secrets.sh"
+     - "./docker/mysql.startup.sh:/tmp/startup.sh"
+    working_dir: /repo
+    command: /tmp/startup.sh
+    restart: always
+    networks:
+      php8cookbook_net:
+        ipv4_address: 10.10.90.20
+
+  php8:
+    container_name: php8
+    hostname: php8
+    image: unlikelysource/php8_img
+    ports:
+    - 8081:8081
+    - 8889:8889
+    volumes:
+     - ".:/repo"
+     - "./docker/secrets.sh:/tmp/secrets.sh"
+     - "./docker/php8.startup.sh:/tmp/startup.sh"
+    build:
+      context: ./docker
+      dockerfile: Dockerfile.PHP8
+    working_dir: /repo
+    command: /tmp/startup.sh
+    restart: always
+    networks:
+      php8cookbook_net:
+        ipv4_address: 10.10.90.88
+
+networks:
+  php8cookbook_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.10.90.0/24"
