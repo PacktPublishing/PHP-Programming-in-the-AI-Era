@@ -1,7 +1,6 @@
 #!/usr/bin/env php
+. /tmp/secrets.sh
 <?php
-declare(strict_types=1);
-
 /**
  * populate.php (PHP 8.4)
  *
@@ -55,9 +54,9 @@ if (!is_readable($fn)) {
 // DB config from environment variables
 $dbHost = getenv('DB_HOST') !== false ? (string)getenv('DB_HOST') : '127.0.0.1';
 $dbPort = getenv('DB_PORT') !== false ? (string)getenv('DB_PORT') : '3306';
-$dbName = getenv('DB_NAME') !== false ? (string)getenv('DB_NAME') : '';
-$dbUser = getenv('DB_USER') !== false ? (string)getenv('DB_USER') : '';
-$dbPass = getenv('DB_PASS') !== false ? (string)getenv('DB_PASS') : '';
+$dbName = getenv('DB_NAM') !== false ? (string)getenv('DB_NAM') : '';
+$dbUser = getenv('DB_USR') !== false ? (string)getenv('DB_USR') : '';
+$dbPass = getenv('DB_PWD') !== false ? (string)getenv('DB_PWD') : '';
 
 if ($dbName === '' || $dbUser === '') {
     stderr("Error: DB_NAME and DB_USER environment variables are required.");

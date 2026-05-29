@@ -7,16 +7,17 @@ use SplFileObject;
 use NoRewindIterator;
 use Generator;
 use Traversable;
+use ArrayObject;
 use IteratorAggregate;
 class LargeFile implements IteratorAggregate
 {
     const ERROR_UNABLE = 'ERROR: Unable to open file';
     const ERROR_TYPE   = 'ERROR: Type must be "ByLength", "ByLine" or "CSV"';     
     protected $file;
-    protected $allowedTypes = ['ByLine', 'ByLength', 'CSV'];
+    protected array $lines = [];
+    protected $allowedTypes = ['ByLine', 'ByLength', 'ByArrayObj', 'CSV'];
     public function __construct(string $filename, 
                                 string $mode = 'r', 
-                                // these use PHP8 constructor argument promotion:
                                 public string $delim = ',',     
                                 public bool $hasHeaders = TRUE)
     {
@@ -42,7 +43,18 @@ class LargeFile implements IteratorAggregate
         // the return value is available only after full iteration has concluded
         return $count;
     }
-
+    protected function fileIteratorByArrayObj() : Traversable
+    {
+        $count = 0;
+        $lines = new ArrayObject();
+        while (!$this->file->eof()) {
+            $line = trim($this->file->fgets() ?? '');
+            if (!empty($line)) {
+                $lines[] = $line;
+            }
+        }
+        return $lines;
+    }
     protected function fileIteratorByLength($numBytes = 1024) : Generator
     {
         $count = 0;
@@ -52,17 +64,19 @@ class LargeFile implements IteratorAggregate
         }
         return $count; 
     }
-
-    public function getIterator($type = 'ByLine', $numBytes = NULL) : Traversable
+    public function getIterator($type = 'ByLine', $numBytes = NULL) : iterable
     {
         if(!in_array($type, $this->allowedTypes)) {
             $message = __METHOD__ . ' : '  . self::ERROR_TYPE . PHP_EOL;
             throw new InvalidArgumentException($message);
         }
-        $iterator = 'fileIterator' . $type;
-        return new NoRewindIterator($this->$iterator($numBytes));
+        $method = 'fileIterator' . $type;
+        if (!empty($numBytes)) {
+            return $this->$method($numBytes);
+        } else {
+            return $this->$method();
+        }
     }
-
     public function fileIteratorCSV()
     {
         $count = 0;

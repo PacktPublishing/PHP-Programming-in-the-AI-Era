@@ -12,11 +12,12 @@ chown -R mysql /repo/mysql
 chmod -R 755 /repo/mysql
 
 echo "Starting MySQL / MariaDB ..."
-if [[ ! -f "/repo/mysql" ]]; then
-    mkdir -f /repo/mysql
+if [[ ! -d "/repo/mysql" ]]; then
+    mkdir -p /repo/mysql
     /usr/bin/mysql_install_db  --user=mysql --ldata=/var/lib/mysql --datadir=/repo/mysql
     /usr/bin/mysqld --user=mysql --datadir=/repo/mysql/
-    sleep 3
+    # Wait until mysqld is ready before running init
+    until /usr/bin/mysql -uroot -e "SELECT 1" &>/dev/null; do sleep 1; done
     /repo/docker/mysql_init_db.sh
 else
     /usr/bin/mysqld --user=mysql --datadir=/repo/mysql/
