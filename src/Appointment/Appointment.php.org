@@ -10,11 +10,8 @@ class Appointment
         public string $start_date_and_time = '',
         public string $end_date_and_time   = '',
     ) {}
-    // if $insert === true exclude "id" arg
-    public function extract(bool $insert = false) : array
+    public function extract() : array
     {
-        $arr = get_object_vars($this);
-        if ($insert) array_shift($arr);
-        return $arr;
+        return get_object_vars($this);
     }
 }

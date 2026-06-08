@@ -1,0 +1,41 @@
+<?php
+namespace Cookbook\Appointment;
+use PDO;
+use PDOStatement;
+use Cookbook\Appointment\ApptAdapter;
+use Cookbook\Appointment\Appointment;
+class ApptRepository
+{
+    public ?PDO $pdo = null;
+    // excludes `id` (auto-increment); add `id` explicitly in SELECT queries
+    public array $cols = ['title', 'location', 'contact_info', 'start_date_and_time', 'end_date_and_time'];
+    public function __construct(array $config) 
+    {
+        $this->pdo = ApptAdapter::getInstance($config);
+    }
+    public function buildCols() : string
+    {
+        return '`' . implode('`,`', $this->cols) . '`';
+    }
+    public function add(Appointment $appt) : bool
+    {
+        $cols = $this->buildCols();
+        $placeholders = ':' . implode(', :', $this->cols);
+        $sql = "INSERT INTO `appointment` ({$cols}) VALUES ({$placeholders})";
+        $stmt = $this->pdo->prepare($sql);
+        return (bool) $stmt->execute($appt->extract());
+    }
+    public function edit(Appointment $appt) : bool
+    {
+        $set = implode(', ', array_map(fn($col) => "`{$col}` = :{$col}", $this->cols));
+        $sql = "UPDATE `appointment` SET {$set} WHERE `id` = :id";
+        $stmt = $this->pdo->prepare($sql);
+        return (bool) $stmt->execute($appt->extract());
+    }
+    public function delete(Appointment $appt) : bool
+    {
+        $sql = "DELETE FROM `appointment` WHERE `id` = :id";
+        $stmt = $this->pdo->prepare($sql);
+        return (bool) $stmt->execute(['id' => $appt->id]);
+    }
+}

@@ -1,0 +1,33 @@
+# Prompts
+1. Create a MySQL database definition of a table named "appointment" with the following columns:
+* id (unsigned int - 10 digits)
+* title (char 16)
+* location (varchar 255)
+* contact_info (varchar 255)
+* start_date_and_time (datetime)
+* end_date_and_time (datetime)
+2. Create a PHP entity class "Cookbook\Appointment\Appointment" that represents a row in the "appointment" table described above.
+* Use PHP 8 constructor argument promotion so that property values can be defined upon object instantiation.
+* Make all properties public with the appropriate data type.
+* Do not create "getter" or "setter" methods.
+* The start and end date and time properties should have a data type of string.
+* The default value for all properties should be an empty value that matches the data type (i.e. use '' for string, 0, for integers, etc.).
+* The "id" column needs to be auto-increment.
+
+2. Review the listed code files and fill in the code as indicated by the comments. Ask me if you have any questions or doubts. Here are the files:
+ApptRepository.php
+ApptService.php
+
+
+3. Create a nicely styled PHP-based website as follows {
+  3A. PHP/HTML page that allows the user to add or edit an appointment with an option to delete it.
+  3B. PHP/HTML page that allows the user to list appointments by start and end dates {
+    3B.1 If no start or end dates are provided, display a paginated list of all appointments.
+    3B.2 If only the start date is provided, display a paginated list of all appointments from and including the start date all the way to the end.
+    3B.3 If only the end date is provided, display a paginated list of all appointments from the beginning up to and including the end date.
+    3B.4 In the list of appointments displayed, for each row, add a button to edit or delete the appointment.
+    3B.5 At the bottom of the page providea button to add a new appointment.
+    3B.6 You'll need to modify the ApptService class to provide the methods to satisfy the different combinations of start or end dates described here.
+  }
+  3C. Let me know if you have any questions before you start.
+}

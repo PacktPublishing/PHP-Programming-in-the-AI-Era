@@ -1,0 +1,18 @@
+<?php
+namespace Cookbook\Appointment;
+use PDOStatement;
+use InvalidArgumentException;
+use Cookbook\Appointment\ApptRepository;
+class ApptService
+{
+    public function __construct(public ApptRepository $repo) {}
+    public function list(string $start_date, string $end_date) : ?PDOStatement
+    {
+        // replaced hard-coded column list with an implode() using $this->cols
+        $sql = 'SELECT `id`, ' . '`' . implode('`,`', $this->repo->cols) . '` '
+             . 'FROM `appointment` WHERE `start_date_and_time` BETWEEN :start_date AND :end_date';
+        $stmt = $this->repo->pdo->prepare($sql);
+        $result = $stmt->execute(['start_date' => $start_date, 'end_date' => $end_date]);
+        return $result ? $stmt : null;
+    }
+}

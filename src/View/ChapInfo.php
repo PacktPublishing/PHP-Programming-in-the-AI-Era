@@ -9,7 +9,7 @@ class ChapInfo
 		"description:returns a set of links for chapters",
 		"param_1: <string> starting directory"		
 	)]
-	public static function getChaps(string $dir) 
+	public static function getChaps(string $dir) : string
 	{
 		$style = 'list-style-type: none;';
 		$files = new RecursiveDirectoryIterator($dir . '/src/');
@@ -28,13 +28,13 @@ class ChapInfo
 				return $result;
 			}
 		};
-		$html = '';
+		$html = [];
 		foreach ($filt as $item) {
 			$chap = basename($item);
-			$html .= '<br />';
-			$html .= '<a href="?chap=' . $chap . '">' . $chap . '</a>';
+			$html[] = '<br /><a href="?chap=' . $chap . '">' . $chap . '</a>';
 		}
-		return $html;
+        sort($html);
+		return implode(PHP_EOL, $html);
 	}
 	#[ChapInfo\getChapFiles(
 		"description:returns a set of links for files for a given chapter",
@@ -52,11 +52,14 @@ class ChapInfo
 					    && parent::current()->getExtension() === 'php');
 			}
 		};
-		$html = '<ul>';
+        $mid  = [];
 		foreach ($filt as $item) {
 			$fn = basename($item);
-			$html .= '<li><a href="/src/' . $chap . '/' . $fn . '">' . $fn . '</a></li>';
+			$mid[] = '<li><a href="/src/' . $chap . '/' . $fn . '">' . $fn . '</a></li>';
 		}
+        sort($mid);
+		$html = '<ul>';
+        $html .= implode(PHP_EOL, $mid);
 		$html .= '<a href="/">BACK</a>';
 		$html .= '</ul>';
 		return $html;

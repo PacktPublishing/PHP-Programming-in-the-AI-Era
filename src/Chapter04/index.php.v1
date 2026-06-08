@@ -1,20 +1,15 @@
 <?php
-// Removed declare()
-// declare(strict_types=1);
-// Replaced "require_once" statements with composer autoloader
-require __DIR__ . '/../../vendor/autoload.php';
-/*
+declare(strict_types=1);
 require_once __DIR__ . '/../src/Appointment/Appointment.php';
+require_once __DIR__ . '/../src/Appointment/ApptAdapter.php';
 require_once __DIR__ . '/../src/Appointment/ApptRepository.php';
 require_once __DIR__ . '/../src/Appointment/ApptService.php';
-*/
 
-use Cookbook\Appointment\ApptService;
 use Cookbook\Appointment\ApptRepository;
-use Cookbook\Appointment\ApptViewHelpers as Helper;
+use Cookbook\Appointment\ApptService;
 
-$pdo    = require __DIR__ . '/../../config/ch04_appt_get_pdo.php';
-$repo   = new ApptRepository($pdo);
+$config = require __DIR__ . '/../config.php';
+$repo   = new ApptRepository($config);
 $svc    = new ApptService($repo);
 
 // ── Delete (Post/Redirect/Get) ────────────────────────────────────────────
@@ -23,25 +18,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'delet
     if ($id > 0 && ($appt = $svc->getById($id))) {
         $repo->delete($appt);
     }
-    // Replaced "index.php" with new filename
-    header('Location: ch04_appointment.php?' 
-        . http_build_query([
-            'start_date' => $_POST['start_date'] ?? '',
-            'end_date'   => $_POST['end_date']   ?? '',
-            'page'       => max(1, (int) ($_POST['page'] ?? 1)),
-            'msg'        => 'deleted'])
-    );
+    header('Location: index.php?' . http_build_query([
+        'start_date' => $_POST['start_date'] ?? '',
+        'end_date'   => $_POST['end_date']   ?? '',
+        'page'       => max(1, (int) ($_POST['page'] ?? 1)),
+        'msg'        => 'deleted',
+    ]));
     exit;
 }
 
 // ── Inputs ────────────────────────────────────────────────────────────────
-// Added strip_tags()
-$start_date = trim(strip_tags($_GET['start_date'] ?? ''));
-$end_date   = trim(strip_tags($_GET['end_date']   ?? ''));
+$start_date = trim($_GET['start_date'] ?? '');
+$end_date   = trim($_GET['end_date']   ?? '');
 $page       = max(1, (int) ($_GET['page'] ?? 1));
 
 $result = $svc->list($start_date, $end_date, $page);
 ['rows' => $rows, 'total' => $total, 'pages' => $pages, 'page' => $page] = $result;
+
+// ── Helpers ───────────────────────────────────────────────────────────────
+function h(string $s): string
+{
+    return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+function fmtDt(string $dt): string
+{
+    return $dt !== '' ? date('M j, Y g:i A', strtotime($dt)) : '—';
+}
+function pageUrl(array $base, int $p): string
+{
+    return 'index.php?' . http_build_query(array_merge($base, ['page' => $p]));
+}
 
 $flashMap = [
     'deleted' => ['success', '<i class="bi bi-check-circle-fill me-2"></i>Appointment deleted.'],
@@ -79,8 +85,7 @@ $filterParams = array_filter(['start_date' => $start_date, 'end_date' => $end_da
         <span class="navbar-brand fw-bold fs-5">
             <i class="bi bi-calendar2-check me-2"></i>Appointment Manager
         </span>
-        <!-- changed from edit.php to ch04_appointment_edit.php -->
-        <a href="ch04_appointment_edit.php" class="btn btn-light btn-sm fw-semibold">
+        <a href="edit.php" class="btn btn-light btn-sm fw-semibold">
             <i class="bi bi-plus-lg me-1"></i>New Appointment
         </a>
     </div>
@@ -101,23 +106,23 @@ $filterParams = array_filter(['start_date' => $start_date, 'end_date' => $end_da
             <h6 class="text-uppercase text-muted fw-semibold mb-3" style="font-size:.72rem;letter-spacing:.08em;">
                 <i class="bi bi-funnel me-1"></i>Filter by Date Range
             </h6>
-            <form method="get" action="ch04_appointment.php" class="row g-3 align-items-end">
+            <form method="get" action="index.php" class="row g-3 align-items-end">
                 <div class="col-sm-5 col-md-4">
                     <label class="form-label fw-medium small" for="start_date">From</label>
                     <input type="date" class="form-control" id="start_date" name="start_date"
-                           value="<?= Helper::h($start_date) ?>">
+                           value="<?= h($start_date) ?>">
                 </div>
                 <div class="col-sm-5 col-md-4">
                     <label class="form-label fw-medium small" for="end_date">To</label>
                     <input type="date" class="form-control" id="end_date" name="end_date"
-                           value="<?= Helper::h($end_date) ?>">
+                           value="<?= h($end_date) ?>">
                 </div>
                 <div class="col-sm-2 col-md-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary">
                         <i class="bi bi-search me-1"></i>Filter
                     </button>
                     <?php if ($start_date || $end_date): ?>
-                    <a href="ch04_appointment.php" class="btn btn-outline-secondary">
+                    <a href="index.php" class="btn btn-outline-secondary">
                         <i class="bi bi-x-lg"></i>
                     </a>
                     <?php endif; ?>
@@ -160,14 +165,13 @@ $filterParams = array_filter(['start_date' => $start_date, 'end_date' => $end_da
                 <?php foreach ($rows as $row): ?>
                 <tr>
                     <td class="text-muted small"><?= (int) $row['id'] ?></td>
-                    <td class="fw-semibold"><?= Helper::h($row['title']) ?></td>
-                    <td class="text-muted small"><?= Helper::h($row['location']) ?: '—' ?></td>
-                    <td class="text-muted small"><?= Helper::h($row['contact_info']) ?: '—' ?></td>
-                    <td class="text-nowrap small"><?= Helper::h(Helper::fmtDt($row['start_date_and_time'])) ?></td>
-                    <td class="text-nowrap small"><?= Helper::h(Helper::fmtDt($row['end_date_and_time'])) ?></td>
+                    <td class="fw-semibold"><?= h($row['title']) ?></td>
+                    <td class="text-muted small"><?= h($row['location']) ?: '—' ?></td>
+                    <td class="text-muted small"><?= h($row['contact_info']) ?: '—' ?></td>
+                    <td class="text-nowrap small"><?= h(fmtDt($row['start_date_and_time'])) ?></td>
+                    <td class="text-nowrap small"><?= h(fmtDt($row['end_date_and_time'])) ?></td>
                     <td class="text-center">
-                        <!-- changed from edit.php to ch04_appointment_edit.php -->
-                        <a href="ch04_appointment_edit.php?id=<?= (int) $row['id'] ?>"
+                        <a href="edit.php?id=<?= (int) $row['id'] ?>"
                            class="btn btn-sm btn-outline-primary btn-icon me-1"
                            title="Edit">
                             <i class="bi bi-pencil-fill"></i>
@@ -176,8 +180,8 @@ $filterParams = array_filter(['start_date' => $start_date, 'end_date' => $end_da
                               onsubmit="return confirm('Delete this appointment?')">
                             <input type="hidden" name="action"     value="delete">
                             <input type="hidden" name="id"         value="<?= (int) $row['id'] ?>">
-                            <input type="hidden" name="start_date" value="<?= Helper::h($start_date) ?>">
-                            <input type="hidden" name="end_date"   value="<?= Helper::h($end_date) ?>">
+                            <input type="hidden" name="start_date" value="<?= h($start_date) ?>">
+                            <input type="hidden" name="end_date"   value="<?= h($end_date) ?>">
                             <input type="hidden" name="page"       value="<?= $page ?>">
                             <button type="submit" class="btn btn-sm btn-outline-danger btn-icon"
                                     title="Delete">
@@ -198,7 +202,7 @@ $filterParams = array_filter(['start_date' => $start_date, 'end_date' => $end_da
         <ul class="pagination justify-content-center">
 
             <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
-                <a class="page-link" href="<?= Helper::h(Helper::pageUrl($filterParams, $page - 1)) ?>" aria-label="Previous">
+                <a class="page-link" href="<?= h(pageUrl($filterParams, $page - 1)) ?>" aria-label="Previous">
                     <i class="bi bi-chevron-left"></i>
                 </a>
             </li>
@@ -215,12 +219,12 @@ $filterParams = array_filter(['start_date' => $start_date, 'end_date' => $end_da
                     <li class="page-item disabled"><span class="page-link px-2">&hellip;</span></li>
                 <?php endif; ?>
                 <li class="page-item <?= $i === $page ? 'active' : '' ?>">
-                    <a class="page-link" href="<?= Helper::h(Helper::pageUrl($filterParams, $i)) ?>"><?= $i ?></a>
+                    <a class="page-link" href="<?= h(pageUrl($filterParams, $i)) ?>"><?= $i ?></a>
                 </li>
             <?php $prev = $i; endforeach; ?>
 
             <li class="page-item <?= $page >= $pages ? 'disabled' : '' ?>">
-                <a class="page-link" href="<?= Helper::h(pageUrl($filterParams, $page + 1)) ?>" aria-label="Next">
+                <a class="page-link" href="<?= h(pageUrl($filterParams, $page + 1)) ?>" aria-label="Next">
                     <i class="bi bi-chevron-right"></i>
                 </a>
             </li>
@@ -237,13 +241,19 @@ $filterParams = array_filter(['start_date' => $start_date, 'end_date' => $end_da
             <p class="text-muted mt-3 mb-4">
                 No appointments found<?= ($start_date || $end_date) ? ' for the selected date range' : '' ?>.
             </p>
-            <!-- changed from edit.php to ch04_appointment_edit.php -->
-            <a href="ch04_appointment_edit.php" class="btn btn-primary">
+            <a href="edit.php" class="btn btn-primary">
                 <i class="bi bi-plus-lg me-1"></i>Add an Appointment
             </a>
         </div>
     </div>
     <?php endif; ?>
+
+    <!-- Add button at bottom -->
+    <div class="text-center mt-4">
+        <a href="edit.php" class="btn btn-success btn-lg px-5 shadow-sm">
+            <i class="bi bi-plus-circle me-2"></i>Add New Appointment
+        </a>
+    </div>
 
 </div>
 
