@@ -4,7 +4,6 @@
 
 {% block body %}
 <h1>News Roundup</h1>
-
 <div id="categories">
     {% for category in categories %}
         <button class="category-btn" data-category="{{ category }}">{{ category }}</button>
@@ -12,6 +11,7 @@
 </div>
 
 <div id="news-table">
+    <p>News Source: <form action="/source" method="get"><input type="text" name="news_src" value="{{ news_src }}" /><input type="submit" /></form></p>
     <!-- The HTML table returned from the AJAX request will be displayed here -->
     {{ news|raw }}
 </div>

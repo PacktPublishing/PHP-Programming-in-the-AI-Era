@@ -27,9 +27,9 @@ class Container implements ContainerInterface
     }
     public function has(string $key) : bool
     {
-        return !empty($this?->instance?->storage[$key]);
+        return !empty(static::$instance?->storage[$key]);
     }
-    public function add(string $key, callable $service) : bool
+    public function add(string $key, mixed $service) : bool
     {
         // TODO: store service as LazyGhost
         static::$instance->storage[$key] = $service;

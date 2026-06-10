@@ -32,6 +32,18 @@
             "config/packages/ai_open_ai_platform.yaml"
         ]
     },
+    "symfony/ai-scraper-tool": {
+        "version": "0.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "0.1",
+            "ref": "d5835512c629bb436e7d9c5f82156d0f03ff6e36"
+        },
+        "files": [
+            "config/packages/ai_scraper_tool.yaml"
+        ]
+    },
     "symfony/console": {
         "version": "8.0",
         "recipe": {

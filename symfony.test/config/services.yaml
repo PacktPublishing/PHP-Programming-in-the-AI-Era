@@ -26,4 +26,3 @@ services:
             $apiKey: '%env(GENAI_API_KEY)%'
             $apiBridge: '%env(GENAI_BRIDGE)%'
             $apiModel: '%env(GENAI_MODEL)%'
-            $apiUrl: '%env(GENAI_URL)%'
