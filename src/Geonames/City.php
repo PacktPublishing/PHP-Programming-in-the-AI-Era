@@ -20,7 +20,7 @@ class City extends GeoBase
     public string $admin2  = ''; // code for the second administrative division, a county in the US, see file admin2Codes.txt; varchar(80) 
     public string $admin3  = ''; // code for third level administrative division, varchar(20)
     public string $admin4  = ''; // code for fourth level administrative division, varchar(20)
-    public float  $population = 0.0; // bigint (8 byte int) 
+    public int    $population = 0; // bigint (8 byte int) 
     public int    $elevation = 0;   //in meters, integer
     public string $dem     = ''; // digital elevation model, srtm3 or gtopo30, average elevation of 3''x3'' (ca 90mx90m) or 30''x30'' (ca 900mx900m) area in meters, integer. srtm processed by cgiar/ciat.
     public string $timezone = '';  // the iana timezone id (see file timeZone.txt) varchar(40)

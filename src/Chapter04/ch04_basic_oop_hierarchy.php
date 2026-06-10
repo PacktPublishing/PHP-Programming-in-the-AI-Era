@@ -1,6 +1,15 @@
 <?php
 // Usage: php __FILE__ city|postcode item[,item,item]
-// create LargeFile instance using Geonames city data
+// To test:
+/*
+ed@localhost:~/Repos/Packt/PHP-Programming-in-the-AI-Era
+$ ./admin.sh shell php8
+php8:/repo# cd data
+php8:/repo/data# wget https://download.geonames.org/export/dump/cities15000.zip
+php8:/repo/data# unzip cities15000.zip 
+php8:/repo/data# rm cities15000.zip 
+*/
+
 $fn   = __DIR__ . '/../../data/cities15000.txt';
 include __DIR__ . '/../../vendor/autoload.php';
 use Cookbook\Geonames\{City,PostCode};
@@ -26,13 +35,15 @@ $filter = new class ($iterator) extends FilterIterator {
 };
 $filter->item = $item;
 // determine which class to use
-$class = ($action === 'city') ? 'City' : 'PostCode';
-$class = '\\Cookbook\\Geonames\\' . $class;
-printf("%20s | %10s | %4s\n", 'City', 'State/Prov', 'ISO2');
-printf("%20s | %10s | %4s\n", '--------------------', '----------', '----');
+$class = match($action) {
+    'city' => City::class,
+    'postcode' => PostCode::class
+};
+printf("%30s | %10s | %4s\n", 'City', 'State/Prov', 'ISO2');
+printf("%30s | %10s | %4s\n", str_repeat('-', 30), '----------', '----');
 foreach ($filter as $row) {
     $item = new $class(str_getcsv($row, "\t"));
-    printf( "%20s | %10s | %4s\n", 
+    printf( "%30s | %10s | %4s\n", 
             $item->getCityName(), 
             $item->getStateProvCode(), 
             $item->getCountry());

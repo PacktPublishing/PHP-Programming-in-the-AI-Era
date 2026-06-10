@@ -38,6 +38,7 @@ class IndexController extends AbstractController
     {
         $data = $request->getContent('news_src') ?? self::DEFAULT_NEWS_SRC;
         $_SESSION['news_src'] = strip_tags($data);
+        return $this->json(['success' => true]);
     }
     #[Route('/api/news', name: 'app_news_api', methods: ['POST'])]
     public function newsAjax(Request $request, GenAiService $service): JsonResponse
