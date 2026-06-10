@@ -9,7 +9,7 @@ class ApptService
         string $start_date = '',
         string $end_date   = '',
         int    $page       = 1,
-        int    $per_page   = 20
+        int    $per_page   = 10
     ): array {
         // replace *date == '' with !empty(*date)
         $start = (!empty($start_date)) ? $start_date . ' 00:00:00' : null;

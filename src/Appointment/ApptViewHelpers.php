@@ -2,7 +2,7 @@
 namespace Cookbook\Appointment;
 class ApptViewHelpers
 {
-    public const DATE_FMT = 'j M Y h:i:s';
+    public const DATE_FMT = 'j M Y H:i:s';
     public static function h(string $s): string
     {
         return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
