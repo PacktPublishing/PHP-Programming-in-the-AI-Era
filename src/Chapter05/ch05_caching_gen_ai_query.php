@@ -4,7 +4,7 @@ include __DIR__ . '/../../vendor/autoload.php';
 use Cookbook\Services\Container;
 use Cookbook\Services\ConnectionFactory;
 use Cookbook\Database\GenAiCache;
-use Cookbook\Database\GenAiRequest;
+use Cookbook\Database\MonicaRequest;
 $container = Container::getInstance();
 $container->add('db_config', function () { return require DB_CONFIG_FN; });
 $container->add('db_connect', new ConnectionFactory($container));
@@ -15,13 +15,15 @@ $container->add('ai_config', function () { return [
         'AI_SYS_TEXT' => 'Keep your responses concise and limited to 256 words or less.',
     ];
 });
-$request = new GenAiRequest($container);
+$request = new MonicaRequest($container);
 $start = microtime(TRUE);
 $prompt = $argv[1] ?? '';
 if (empty($prompt)) {
     exit('Usage:  php ' . basename(__FILE__) . ' "PROMPT"' . PHP_EOL);
 }
-echo $request($prompt);
+$ttl = $argv[2] ?? 5;
+echo $request($prompt, $ttl);
 echo PHP_EOL;
+echo 'TTL set to  : ' . $ttl . ' seconds' . PHP_EOL;
 echo 'Elapsed Time: ' . (microtime(TRUE) - $start);
 echo PHP_EOL;

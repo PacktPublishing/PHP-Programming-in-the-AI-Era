@@ -5,8 +5,8 @@ use Exception;
 use DateInterval;
 use Psr\SimpleCache\CacheInterface;
 use Psr\Container\ContainerInterface;
-#[GenAiRequest("Processes GenAI request")]
-class GenAiRequest
+#[MonicaRequest("Processes GenAI request")]
+class MonicaRequest
 {
     public const NO_RESPONSE = 'No response from your AI platform';
     public const FROM_CACHE  = 'Returned from cache: ' . PHP_EOL;
@@ -20,8 +20,9 @@ class GenAiRequest
     }
     #[GenAiRequest\__invoke(
         "@param string \$request",
+        "@param int \$ttl (in seconds)",
         "@return string \$response")]
-    public function __invoke(string $request) : string
+    public function __invoke(string $request, int $ttl = 0) : string
     {
         $request = trim(strip_tags($request));  // NOTE: doesn't protect against prompt injection attacks
         $key = $this->createKey($request);
@@ -31,7 +32,7 @@ class GenAiRequest
             // make GenAI call
             $text = $this->makeCall($request);
             // cache result
-            $this->cache->set($key, $text, new DateInterval('P1W'));
+            $this->cache->set($key, $text, $ttl);
             $prefix = self::FROM_ORIG;
         }
         return $prefix . $text;
@@ -99,6 +100,8 @@ class GenAiRequest
     }
     protected function createKey(string $text)
     {
-        return md5($text);
+        // NOTE: there's no need for a cryptographically secure hash in this instance as it's never publically exposed
+        //       we use sha1() because it's fast, and has less collisions than md5()
+        return $this->ai_config['AI_MODEL'] . ':' . sha1($text);
     }
 }
