@@ -1,13 +1,13 @@
 <?php
 namespace Cookbook\Database;
 use InvalidArgumentException;
-#[QueryBuilder(
-    "Builds an SQL query using OOP Builder pattern",
+#[QueryBuilderWithPrep(
+    "Builds an SQL query using OOP Builder pattern for use as prepared statement with named placeholders",
     "To create a prepared statement w/ placeholders, just supply the placeholders instead of values"
 )]
-class QueryBuilder extends QueryBuilderBase
+class QueryBuilderWithPrep extends QueryBuilderBase
 {
-    public const ERR_EXP = 'Expressions need to take this form: COL OPERATOR VALUE';
+    public array $values = [];
     #[QueryBuilder\quoteExp("string \$a needs to take the form COL OPERATOR VALUE")]
     protected function quoteExp(string $a)
     {
@@ -21,8 +21,7 @@ class QueryBuilder extends QueryBuilderBase
         }
         $col  = trim(array_shift($list));
         $op   = trim(array_shift($list));
-        // glue together any remaining values into one
-        $val  = trim(implode(' ', $list ?? []));
-        return $this->quoteCol($col) . ' ' . $op . ' ' . $this->quoteVal($val);
+        $this->values[$col] = trim(implode(' ', $list ?? []));
+        return $this->quoteCol($col) . ' ' . $op . ' :' . $col;
     }
 }

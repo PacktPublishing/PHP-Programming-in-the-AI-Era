@@ -1,50 +1,76 @@
 <?php
 namespace Cookbook\Database;
 use PDO;
+use DateTime;
 use DateInterval;
 use Psr\SimpleCache\CacheInterface;
 use Psr\Container\ContainerInterface;
+// Table definition:
+/* 
+CREATE TABLE gen_ai_cache (
+  `cache_key` char(64) NOT NULL,
+  `response` text NOT NULL,
+  `ttl_exp` int(16) DEFAULT 0,
+  PRIMARY KEY (`cache_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+*/
 #[GenAiCache("Provides a GenAI caching service as per https://www.php-fig.org/psr/psr-16/")]
 class GenAiCache implements CacheInterface
 {
-    public const TABLE  = 'gen_ai_cache';
     public ?PDO $pdo = NULL;
-    public string $findSQL  = 'SELECT cache_key,response FROM %s WHERE cache_key = ?';
-    public string $saveSQL  = 'INSERT INTO %s (cache_key, response) VALUES (?,?)';
-    public string $delSQL   = 'DELETE FROM %s WHERE cache_key = ?';
-    public string $clearSQL = 'DELETE FROM %s';
+    public const string TABLE  = 'gen_ai_cache';
+    public const int DEFAULT_TTL = 604800;  // 1 week in seconds
+    public const string FIND_SQL  = 'SELECT response,ttl_exp FROM %s WHERE cache_key = ?';
+    public const string HAS_SQL   = 'SELECT count(cache_key) FROM %s WHERE cache_key = ?';
+    public const string SAVE_SQL  = 'INSERT INTO %s (cache_key, response, ttl_exp) VALUES (?,?, ?)';
+    public const string DEL_SQL   = 'DELETE FROM %s WHERE cache_key = ?';
+    public const string CLEAR_SQL = 'DELETE FROM %s';
     public function __construct(ContainerInterface $container)
     {
-        $this->pdo = $container->get('db_connect');
+        $this->pdo = $container->get('db_connect');        
     }
     public function get($key, mixed $default = NULL) : mixed
     {
-        $stmt = $this->pdo->prepare(sprintf($this->findSQL, static::TABLE));
-        $result = $stmt->execute([$key]);
-        $text = base64_decode($stmt->fetchAll(PDO::FETCH_ASSOC)[0]['response'] ?? '');
-        return $text;
+        $value  = '';
+        $stmt   = $this->pdo->prepare(sprintf(static::FIND_SQL, static::TABLE));
+        $stmt->execute([$key]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC) ?? [];
+        // check for TTL
+        if (!empty($result) && ($result['ttl_exp'] ?? 0) > 0) {
+            if ($result['ttl_exp'] < time()) {
+                $this->delete($key);
+            } else {
+                $value = $result['response'] ?? '';
+            }
+        }
+        return $value;
     }
-    public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
+    // $ttl value of 0 = never expires
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = 0): bool
     {
-        $stmt = $this->pdo->prepare(sprintf($this->saveSQL, static::TABLE));
-        return (bool) $stmt->execute([$key, base64_encode($value)]);
+        if (is_object($ttl) && $ttl instanceof DateInterval) {
+            // calculate future timestamp
+            $ttl = (new DateTime())->add($ttl)->getTimestamp();
+        } else {
+            $ttl = (int) $ttl;
+            // calculate future timestamp
+            if ($ttl > 0) $ttl = time() +  $ttl;
+        }
+        $stmt = $this->pdo->prepare(sprintf(static::SAVE_SQL, static::TABLE, $ttl));
+        return (bool) $stmt->execute([$key, $value, $ttl]);
     }
     public function delete(string $key) : bool
     {
-        $result = FALSE;
-        if ($this->has($key)) {
-            $stmt = $this->pdo->prepare(sprintf($this->delSQL, static::TABLE));
-            $result = (bool) $stmt->execute([$key]);
-        }
-        return $result;
+        $stmt = $this->pdo->prepare(sprintf(static::DEL_SQL, static::TABLE));
+        return (bool) $stmt->execute([$key]);
     }
     public function clear() : bool
     {
-        return (bool) $this->pdo->exec(sprintf($this->clearSQL, static::TABLE));
+        return (bool) $this->pdo->exec(sprintf(static::CLEAR_SQL, static::TABLE));
     }
     public function has(string $key) : bool
     {
-        return (bool) $this->get($key);
+        return (bool) $this->pdo->exec(sprintf(static::HAS_SQL, static::TABLE));
     }
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {

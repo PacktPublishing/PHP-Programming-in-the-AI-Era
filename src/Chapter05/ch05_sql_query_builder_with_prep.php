@@ -1,10 +1,13 @@
 <?php
 // OOP query builder example
 include __DIR__ . '/../../vendor/autoload.php';
-use Cookbook\Database\QueryBuilder;
+use Cookbook\Database\QueryBuilderWithPrep as QueryBuilder;
 use Cookbook\Database\PostCodeTable;
 $query = new QueryBuilder(PostCodeTable::COLS, PostCodeTable::TABLE);
 echo $query->select()->where('admin_name1 = New York')->and('postal_code = 13676')->getSql();
+echo PHP_EOL;
+echo 'Values to use when executing prepared statement: ' . PHP_EOL;
+print_r($query->values);
 echo PHP_EOL;
 $query->sql = '';
 echo $query->select()->where('country_code = US')
@@ -15,6 +18,9 @@ echo $query->select()->where('country_code = US')
     ->limit(10)
     ->offset(20)
     ->getSql();
+echo PHP_EOL;
+echo 'Values to use when executing prepared statement: ' . PHP_EOL;
+print_r($query->values);
 echo PHP_EOL;
 
 // sample table:
