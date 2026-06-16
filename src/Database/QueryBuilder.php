@@ -9,7 +9,7 @@ class QueryBuilder extends QueryBuilderBase
 {
     public const ERR_EXP = 'Expressions need to take this form: COL OPERATOR VALUE';
     #[QueryBuilder\quoteExp("string \$a needs to take the form COL OPERATOR VALUE")]
-    protected function quoteExp(string $a)
+    protected function quoteExp(string $a) : string
     {
         // get rid of double space
         $a = preg_replace('/  /', ' ', $a);

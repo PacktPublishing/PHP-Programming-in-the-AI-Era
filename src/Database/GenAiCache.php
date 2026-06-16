@@ -29,25 +29,30 @@ class GenAiCache implements CacheInterface
     {
         $this->pdo = $container->get('db_connect');        
     }
-    public function get($key, mixed $default = NULL) : mixed
+    public function get(string $key, mixed $default = NULL) : mixed
     {
         $value  = '';
         $stmt   = $this->pdo->prepare(sprintf(static::FIND_SQL, static::TABLE));
         $stmt->execute([$key]);
         $result = $stmt->fetch(PDO::FETCH_ASSOC) ?? [];
         // check for TTL
-        if (!empty($result) && ($result['ttl_exp'] ?? 0) > 0) {
-            if ($result['ttl_exp'] < time()) {
-                $this->delete($key);
-            } else {
+        if (!empty($result)) {
+            if ((int) $result['ttl_exp'] === 0) {
                 $value = $result['response'] ?? '';
+            } else {
+                if ($result['ttl_exp'] < time()) {
+                    $this->delete($key);
+                } else {
+                    $value = $result['response'] ?? '';
+                }
             }
         }
         return $value;
     }
     // $ttl value of 0 = never expires
-    public function set(string $key, mixed $value, DateInterval|int|null $ttl = 0): bool
+    public function set(string $key, mixed $value, DateInterval|int|null $ttl = NULL): bool
     {
+        if ($this->has($key)) return true;
         if (is_object($ttl) && $ttl instanceof DateInterval) {
             // calculate future timestamp
             $ttl = (new DateTime())->add($ttl)->getTimestamp();
@@ -56,7 +61,7 @@ class GenAiCache implements CacheInterface
             // calculate future timestamp
             if ($ttl > 0) $ttl = time() +  $ttl;
         }
-        $stmt = $this->pdo->prepare(sprintf(static::SAVE_SQL, static::TABLE, $ttl));
+        $stmt = $this->pdo->prepare(sprintf(static::SAVE_SQL, static::TABLE));
         return (bool) $stmt->execute([$key, $value, $ttl]);
     }
     public function delete(string $key) : bool
@@ -70,7 +75,9 @@ class GenAiCache implements CacheInterface
     }
     public function has(string $key) : bool
     {
-        return (bool) $this->pdo->exec(sprintf(static::HAS_SQL, static::TABLE));
+        $stmt = $this->pdo->prepare(sprintf(static::HAS_SQL, static::TABLE));
+        $stmt->execute([$key]);
+        return (bool) $stmt->fetchColumn();
     }
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {

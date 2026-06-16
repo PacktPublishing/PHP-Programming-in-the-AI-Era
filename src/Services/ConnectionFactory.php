@@ -2,7 +2,6 @@
 namespace Cookbook\Services;
 use PDO;
 use Throwable;
-use RuntimeException;
 use Cookbook\Database\Connect;
 use Psr\Container\ContainerInterface;
 #[ConnectionFactory("Uses the database configuration array to produce a Connect instance")]

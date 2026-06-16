@@ -13,7 +13,7 @@ $query->sql = '';
 echo $query->select()->where('country_code = US')
     ->and()
     ->like('admin_name1', 'New York')
-    ->or()->in('post_code', ['10606', '10607', '10610'])
+    ->or()->in('postal_code', ['10606', '10607', '10610'])
     ->and()->not('accuracy < 3')
     ->limit(10)
     ->offset(20)

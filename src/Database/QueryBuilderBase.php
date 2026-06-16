@@ -22,14 +22,14 @@ abstract class QueryBuilderBase
         public string $quoteColChar = '`',
         public string $quoteValChar = '\'') 
     {}
-    protected abstract function quoteExp(string $a);
+    protected abstract function quoteExp(string $a) : string;
     #[QueryBuilderBaseBase\quoteCol("string \$a : column or table name to be quoted")]
-    protected function quoteCol(string $a)
+    protected function quoteCol(string $a) : string
     {
         return (empty($a)) ? '' : $this->quoteColChar . $a . $this->quoteColChar;
     }
     #[QueryBuilderBaseBase\quoteVal("string \$a : column or table name to be quoted")]
-    protected function quoteVal(string $a)
+    protected function quoteVal(string $a) : string
     {
         return (empty($a)) ? '' : $this->quoteValChar . $a . $this->quoteValChar;
     }
