@@ -5,10 +5,12 @@
         "phpunit/phpunit": "*",
         "psr/container": "*",
         "psr/simple-cache": "*",
-        "laminas/laminas-diactoros": "*",
+        "laminas/laminas-diactoros": "^3.8",
         "cboden/ratchet": "*",
         "psr/http-message": "*",
-        "psr/http-server-middleware": "*"
+        "psr/http-server-middleware": "^1.0",
+        "laminas/laminas-httphandlerrunner": "^2.13",
+        "laminas/laminas-stratigility": "^4.3"
     },
     "autoload" : {
 		"psr-4" : {

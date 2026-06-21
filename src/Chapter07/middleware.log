@@ -43,3 +43,61 @@
  2026-05-17 05:23:10 :    nothing : {"lang_from":"en","lang_to":"it","phrase":"Hello, how are you today?"} : 10.10.90.88
  2026-05-17 05:37:04 :    nothing : {"lang_from":"en","lang_to":"it","phrase":"Hello, how are you today?"} : 10.10.90.88
  2026-05-17 05:49:06 :   distance : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"xx","units":"km"} : 10.10.90.88
+ 2026-06-18 22:43:41 :    Unknown :                        No Data : Command Line
+ 2026-06-18 22:57:04 :    Unknown :                        No Data : Command Line
+ 2026-06-18 23:01:14 :  translate : {"lang_from":"en","lang_to":"it","phrase":"Hello, how are you today?"} : 127.0.0.1
+ 2026-06-18 23:03:17 :  translate : {"lang_from":"en","lang_to":"it","phrase":"Hello, how are you today?"} : 127.0.0.1
+ 2026-06-19 10:35:18 :    Unknown : {"lang_from":"en","lang_to":"it","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-19 10:37:01 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-19 10:38:45 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-19 10:39:10 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-19 10:56:42 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 03:58:39 :    Unknown : {"lang_from":"en","lang_to":"it","phrase":"Hello, how are you today?"} : 127.0.0.1
+ 2026-06-20 04:20:44 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 04:21:50 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 04:32:51 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 04:34:00 :    Unknown : {"lang_from":"en","lang_to":"fr","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:07:19 :    Unknown : {"lang_from":"en","lang_to":"kh","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:08:53 :    Unknown : {"lang_from":"en","lang_to":"kh","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:17:47 :    Unknown : {"lang_from":"en","lang_to":"kh","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:18:14 :    Unknown : {"lang_from":"en","lang_to":"kh","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:18:42 :    Unknown : {"lang_from":"en","lang_to":"kh","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:19:18 :    Unknown : {"lang_from":"en","lang_to":"fr","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:19:56 :    Unknown : {"lang_from":"en","lang_to":"fr","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:20:01 :    Unknown : {"lang_from":"en","lang_to":"kh","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:40:10 :    Unknown : {"lang_from":"en","lang_to":"it","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 06:43:50 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 06:45:51 :  noservice : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 06:46:03 :  noservice : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 06:48:13 :   distance : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"xx","units":"km"} : 10.10.90.88
+ 2026-06-20 06:50:30 :   distance : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"xx","units":"km"} : 10.10.90.88
+ 2026-06-20 06:50:40 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 06:53:21 :   distance : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"xx","units":"km"} : 10.10.90.88
+ 2026-06-20 07:02:51 :   distance : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"xx","units":"km"} : 10.10.90.88
+ 2026-06-20 07:02:58 :   distance : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 07:13:46 :    Unknown :          {"iso2_or_name":"it"} : 10.10.90.88
+ 2026-06-20 07:15:14 :    Unknown :          {"iso2_or_name":"it"} : 10.10.90.88
+ 2026-06-20 07:28:02 :    Unknown :          {"iso2_or_name":"it"} : 10.10.90.88
+ 2026-06-20 07:28:51 :    Unknown :          {"iso2_or_name":"it"} : 10.10.90.88
+ 2026-06-20 07:30:50 :    Unknown :          {"iso2_or_name":"it"} : 10.10.90.88
+ 2026-06-20 07:46:31 :    Unknown :                        No Data : Command Line
+ 2026-06-20 07:46:46 :    Unknown :          {"iso2_or_name":"it"} : 10.10.90.88
+ 2026-06-20 07:46:58 :    Unknown :          {"iso2_or_name":"kh"} : 10.10.90.88
+ 2026-06-20 07:47:07 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 07:48:55 :    Unknown : {"city_from":"Paris","city_to":"Rome","iso2_from":"fr","iso2_to":"it","units":"km"} : 10.10.90.88
+ 2026-06-20 07:49:15 :    Unknown : {"lang_from":"en","lang_to":"it","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 07:49:24 :    Unknown : {"lang_from":"en","lang_to":"xx","phrase":"Hello, how are you today?"} : 10.10.90.88
+ 2026-06-20 07:52:24 :    Unknown :          {"iso2_or_name":"kh"} : 10.10.90.88
+ 2026-06-20 07:52:32 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 07:56:32 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 07:56:36 :    Unknown :          {"iso2_or_name":"kh"} : 10.10.90.88
+ 2026-06-20 07:57:57 :    Unknown :          {"iso2_or_name":"kh"} : 10.10.90.88
+ 2026-06-20 07:58:01 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 07:58:13 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 07:58:19 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 07:58:21 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 07:58:37 :    Unknown :          {"iso2_or_name":"kh"} : 10.10.90.88
+ 2026-06-20 08:04:40 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 08:04:42 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 08:06:13 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88
+ 2026-06-20 08:06:20 :    Unknown :          {"iso2_or_name":"xx"} : 10.10.90.88

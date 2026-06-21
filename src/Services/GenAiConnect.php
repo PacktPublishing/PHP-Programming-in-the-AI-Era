@@ -2,6 +2,8 @@
 namespace Cookbook\Services;
 use Exception;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Laminas\Diactoros\Response\JsonResponse;
 class GenAiConnect
 {
     public const ERR_TRANS = 'Unknown transmission error.';
@@ -11,7 +13,7 @@ class GenAiConnect
     {
         $this->config = $container->get('ai_config');
     }
-    public function genAIcall(string $prompt) : string
+    public function genAIcall(string $prompt) : ResponseInterface
     {
         // $config is an array that contains the following keys:
         /*
@@ -37,25 +39,32 @@ class GenAiConnect
                 'Authorization: Bearer ' . $this->config['ai_api_key'],
             ],
             CURLOPT_SSL_VERIFYPEER => false,  // Set to TRUE in production!
-            CURLOPT_SSL_VERIFYHOST => false,  // Set to TRUE in production!
+            CURLOPT_SSL_VERIFYHOST => false,  // Set to 2 in production!
         ]);
-        $result   = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $error    = curl_error($ch);
-        curl_close($ch);
-        // method, timestamp, $result
-        $message  = sprintf('%s|%d|%s' . PHP_EOL, 
-                            __METHOD__, time(), $result);
-        file_put_contents(static::CALL_LOG, $message, FILE_APPEND);
-        if (!empty($error)) {
-            error_log(__METHOD__ . ':' . $error);
-            throw new Exception(sprintf('%s [%s]', static::ERR_TRANS, __LINE__));
-        }
-        if ($httpCode !== 200) {
-            throw new Exception(sprintf('ERROR %s [HTTP:%s]', __LINE__, $httpCode));
-        }
-        $response = (string) $result;
-        return $response;
+
+        try {
+            $result   = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $error    = curl_error($ch);
+            // used for token usage tracking
+            $message  = sprintf('%s|%d|%s' . PHP_EOL, 
+                                __METHOD__, time(), $result);
+            file_put_contents(static::CALL_LOG, $message, FILE_APPEND);
+            if (!empty($error)) {
+                error_log(__METHOD__ . ':' . $error);
+                throw new Exception(sprintf('%s [%s]', static::ERR_TRANS, __LINE__));
+            }
+            if ((int) $httpCode >= 400) {
+                throw new Exception(sprintf('ERROR %s [HTTP:%s]', __LINE__, $httpCode));
+            }
+            $response = ['success' => TRUE, 'data' => $result];
+        } catch (Throwable $t) {
+            error_log(__METHOD__ . ':' . $t->getMessage());
+            $response = ['success' => FALSE, 'data' => static::API_ERROR];
+        } finally {
+            curl_close($ch);
+        }      
+        return (new JsonResponse($response))->withStatus($httpCode);
     }
     public function __invoke(string $prompt)
     {
