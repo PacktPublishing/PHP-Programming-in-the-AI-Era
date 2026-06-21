@@ -1,7 +1,5 @@
 <?php
 namespace Cookbook\Middleware;
-use ArrayObject;
-use FilesystemIterator;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 abstract class BaseHandler implements RequestHandlerInterface

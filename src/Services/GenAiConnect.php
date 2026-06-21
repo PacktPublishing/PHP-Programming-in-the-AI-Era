@@ -60,7 +60,7 @@ class GenAiConnect
             $response = ['success' => TRUE, 'data' => $result];
         } catch (Throwable $t) {
             error_log(__METHOD__ . ':' . $t->getMessage());
-            $response = ['success' => FALSE, 'data' => static::API_ERROR];
+            $response = ['success' => FALSE, 'data' => static::ERR_TRANS];
         } finally {
             curl_close($ch);
         }      

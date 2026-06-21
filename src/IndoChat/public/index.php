@@ -918,7 +918,7 @@ function appendMessage(data) {
   const direction  = isSent ? 'sent' : 'recv';
 
   // Translation label: show what language it was translated INTO
-  const targetLang = isSent ? data.toLang : data.fromLang === currentLang ? data.fromLang : data.fromLang;
+  const targetLang = isSent ? data.toLang : (data.fromLang === currentLang ? data.fromLang : data.fromLang);
   // For sent: show the recipient's language. For received: show sender's language + translation into ours.
 
   let translationHtml = '';
