@@ -6,5 +6,5 @@ return [
     'db_usr'     => 'cookbook',
     'db_pwd'     => 'password',
     'db_host'    => 'mysql.local',
-    'options'    => [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    'options'    => [\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]
 ];

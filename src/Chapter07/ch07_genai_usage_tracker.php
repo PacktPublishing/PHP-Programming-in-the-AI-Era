@@ -1,10 +1,11 @@
 <?php
 // TO DEMO: set up and run ch07_microservices_library.php to add entries to the api_call.log
 include __DIR__ . '/../../vendor/autoload.php';
-use Cookbook\Services\GenAiUsageTracker;
-// create GenAiUsageTracker instance accepting all defaults
-$tracker = new GenAiUsageTracker();
-$num = $tracker->updateCsv(eraseLog: FALSE, appendCsv: FALSE);
+use Cookbook\Usage\GenAiUsageTracker;
+use Cookbook\Usage\OpenAiPlatform;
+// create GenAiUsageTracker instance accepting defaults for GenAiUsageTracker
+$tracker = new GenAiUsageTracker(new OpenAiPlatform('|',1,2));
+$num = $tracker->updateCsv(eraseLog: TRUE);
 if (empty($num)) {
     echo 'No Updates' . PHP_EOL;
 } else {

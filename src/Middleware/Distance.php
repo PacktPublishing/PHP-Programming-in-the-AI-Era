@@ -1,16 +1,15 @@
 <?php
 namespace Cookbook\Middleware;
+use Throwable;
+use Exception;
 use RuntimeException;
 use InvalidArgumentException;
-use Cookbook\Middleware\BaseHandler;
-use Cookbook\Middleware\Traits\VerifyIso2Trait;
-use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Laminas\Diactoros\Response\JsonResponse;
 class Distance extends BaseHandler
 {
-    use VerifyIso2Trait;
     public const DISTANCE_UNITS = ['km','miles'];
     public const USAGE = 'USAGE: '
         . 'city_from : City to start from,'
@@ -30,36 +29,49 @@ class Distance extends BaseHandler
     )]    
     public function handle(ServerRequestInterface $request) : ResponseInterface
     {
-        $data = $request->getParsedBody()['data'] ?? '';
-        $args = json_decode($data, associative: TRUE, flags: JSON_THROW_ON_ERROR);
-        $city_from = $args['city_from'] ?? '';
-        $city_to  = $args['city_to'] ?? '';
-        $iso2_from = $args['iso2_from'] ?? 'Unknown';
-        $iso2_to  = $args['iso2_to'] ?? 'Unknown';
-        $units = $args['units'] ?? 'km';
-        if (empty($city_from)) {
-            throw new InvalidArgumentException('SOURCE CITY MISSING: ' . self::USAGE);
+        try {
+            $data = $request->getParsedBody()['data'] ?? '';
+            $args = json_decode($data, associative: TRUE, flags: JSON_THROW_ON_ERROR);
+            $city_from = $args['city_from'] ?? '';
+            $city_to  = $args['city_to'] ?? '';
+            $iso2_from = $args['iso2_from'] ?? 'Unknown';
+            $iso2_to  = $args['iso2_to'] ?? 'Unknown';
+            $units = $args['units'] ?? 'km';
+            if (empty($city_from)) {
+                throw new InvalidArgumentException('SOURCE CITY MISSING: ' . self::USAGE);
+            }
+            if (empty($city_to)) {
+                throw new InvalidArgumentException('DESTINATION CITY MISSING: ' . self::USAGE);
+            }
+            if (!$this->verify_iso2($iso2_from)) {
+                throw new InvalidArgumentException("INVALID SOURCE ISO2 CODE: $iso2_from: " . self::USAGE);
+            }
+            if (!$this->verify_iso2($iso2_to)) {
+                throw new InvalidArgumentException("INVALID DESTINATION ISO2 CODE: $iso2_to: " . self::USAGE);
+            }
+            if (!in_array($units, static::DISTANCE_UNITS)) {
+                throw new InvalidArgumentException('UNIT MUST BE ONE OF: ' . implode(',', static::DISTANCE_UNITS) . ' ' . self::USAGE);
+            }
+            $connect = $this->container->get('GenAiConnect');
+            if (empty($connect)) {
+                throw new RuntimeException('Required service is offline. ' . self::USAGE);
+            }
+            $prompt = "Give me the distance in $units "
+                    . "from: $city_from, $iso2_from, "
+                    . "to: $city_to, $iso2_to. "
+                    . 'Return only the distance figure in km or miles as given with no additional explanation or text.';
+            return $connect->genAIcall($prompt);
+        } catch (Exception $e) {
+            $response = ['success' => FALSE, 'data' => $e->getMessage()];
+            return new JsonResponse($response)->withStatus(400);
+        } catch (Throwable $t) {
+            $response = ['success' => FALSE, 'data' => static::ERR_UNKNOWN];
+            return new JsonResponse($response)->withStatus(500);
         }
-        if (empty($city_to)) {
-            throw new InvalidArgumentException('DESTINATION CITY MISSING: ' . self::USAGE);
-        }
-        if (!$this->verify_iso2($iso2_from)) {
-            throw new InvalidArgumentException("INVALID SOURCE ISO2 CODE: $iso2_from: " . self::USAGE);
-        }
-        if (!$this->verify_iso2($iso2_to)) {
-            throw new InvalidArgumentException("INVALID DESTINATION ISO2 CODE: $iso2_to: " . self::USAGE);
-        }
-        if (!in_array($units, static::DISTANCE_UNITS)) {
-            throw new InvalidArgumentException('UNIT MUST BE ONE OF: ' . implode(',', static::DISTANCE_UNITS) . ' ' . self::USAGE);
-        }
-        $connect = $this->container->get('GenAiConnect');
-        if (empty($connect)) {
-            throw new RuntimeException('Required service is offline. ' . self::USAGE);
-        }
-        $prompt = "Give me the distance in $units "
-                . "from: $city_from, $iso2_from, "
-                . "to: $city_to, $iso2_to. "
-                . 'Return only the distance figure in km or miles as given with no additional explanation or text.';
-        return (new JsonResponse($connect->genAIcall($prompt)))->withStatus(200);
+    }
+    public function verify_iso2(string $iso2)
+    {
+        $codes = $this->container->get('iso2');
+        return isset($codes[strtoupper($iso2)]);
     }
 }

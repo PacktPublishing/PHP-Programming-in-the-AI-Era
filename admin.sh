@@ -21,7 +21,7 @@ elif [[ "$1" = "ls" ]]; then
     $DOCKER container ls
 elif [[ "$1" = "error" ]]; then
     echo "Error log results:"
-    $DOCKER exec -it $CONTAINER_NGINX /bin/bash cat /var/log/nginx/error.log
+    $DOCKER exec -it $CONTAINER_NGINX /bin/cat /var/log/nginx/error.log
 elif [[ "$1" = "shell" ]]; then
     if [[ "$2" = "php" ]]; then
         $DOCKER exec -it $CONTAINER_PHP8 /bin/bash

@@ -1,6 +1,5 @@
 <?php
 namespace Cookbook\Middleware;
-use Laminas\Diactoros\Response\JsonResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
@@ -18,12 +17,7 @@ class Logger implements MiddlewareInterface
             ($request->getParsedBody()['action'] ?? 'Unknown'),
             ($request->getParsedBody()['data'] ?? 'No Data'),
             ($request->getServerParams()['REMOTE_ADDR']) ?? 'Command Line');
-        if (file_put_contents(self::LOG_FILE, $text, FILE_APPEND)) {
-            $msg = ['status' => 'success', 'message' => self::OK_LOG];
-            return new JsonResponse($msg, 200);
-        } else {
-            $msg = ['status' => 'fail', 'message' => self::ERR_LOG];
-            return new JsonResponse($msg, 500);
-        }
+        file_put_contents(self::LOG_FILE, $text, FILE_APPEND);
+        return $handler->handle($request);
     }
 }

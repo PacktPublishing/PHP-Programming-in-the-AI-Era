@@ -21,7 +21,7 @@ $prompt = $argv[1] ?? '';
 if (empty($prompt)) {
     exit('Usage:  php ' . basename(__FILE__) . ' "PROMPT"' . PHP_EOL);
 }
-$ttl = $argv[2] ?? 5;
+$ttl = $argv[2] ?? GenAiCache::DEFAULT_TTL;
 echo $request($prompt, $ttl);
 echo PHP_EOL;
 echo 'TTL set to  : ' . $ttl . ' seconds' . PHP_EOL;

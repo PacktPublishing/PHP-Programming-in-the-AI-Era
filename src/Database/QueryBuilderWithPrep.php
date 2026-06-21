@@ -9,7 +9,7 @@ class QueryBuilderWithPrep extends QueryBuilderBase
 {
     public array $values = [];
     #[QueryBuilder\quoteExp("string \$a needs to take the form COL OPERATOR VALUE")]
-    protected function quoteExp(string $a)
+    protected function quoteExp(string $a) : string
     {
         // get rid of double space
         $a = preg_replace('/  /', ' ', $a);
