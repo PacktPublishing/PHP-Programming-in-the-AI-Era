@@ -81,7 +81,7 @@ $server = new RequestHandlerRunner(
         $response = (new ResponseFactory())->createResponse(500);
         $response->getBody()->write(sprintf(
             'An error occurred: %s',
-            $e->getMessage
+            $e->getMessage()
         ));
         return $response;
     }
