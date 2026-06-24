@@ -2,6 +2,7 @@
 namespace Cookbook\REST;
 use Exception;
 use SplFileObject;
+use Throwable;
 class SimpleAPICall
 {
     const API_GET_URL = 'https://api.unlikelysource.com/api';

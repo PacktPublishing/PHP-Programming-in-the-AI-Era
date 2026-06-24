@@ -5,7 +5,6 @@ use Iterator;
 use Generator;
 use InvalidArgumentException;
 use RegexIterator;
-use RecursiveRegexIterator;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
 

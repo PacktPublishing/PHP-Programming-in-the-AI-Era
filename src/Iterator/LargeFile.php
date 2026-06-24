@@ -1,10 +1,8 @@
 <?php
 namespace Cookbook\Iterator;
-
 use Exception;
 use InvalidArgumentException;
 use SplFileObject;
-use NoRewindIterator;
 use Generator;
 use Traversable;
 use ArrayObject;
@@ -12,10 +10,10 @@ use IteratorAggregate;
 class LargeFile implements IteratorAggregate
 {
     const ERROR_UNABLE = 'ERROR: Unable to open file';
-    const ERROR_TYPE   = 'ERROR: Type must be "ByLength", "ByLine" or "CSV"';     
+    const ERROR_TYPE   = 'ERROR: Type must be "CSV", "ByLine", "ByLength", or "ByArrayObj"';     
     protected $file;
     protected array $lines = [];
-    protected $allowedTypes = ['ByLine', 'ByLength', 'ByArrayObj', 'CSV'];
+    protected $allowedTypes = ['CSV', 'ByLine', 'ByLength', 'ByArrayObj'];
     public function __construct(string $filename, 
                                 string $mode = 'r', 
                                 public string $delim = ',',     

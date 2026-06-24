@@ -12,7 +12,7 @@ try {
     }
     echo str_repeat('-', 52) . PHP_EOL;
     printf("%-40s : %8d\n", 'Total Words', $words);
-    printf("%-40s : %8d\n", 'Average Words Per Line', ($words / $iterator->getReturn()));
+    printf("%-40s : %8.2f\n", 'Average Words Per Line', ($words / $iterator->getReturn()));
     printf("%-40s : %2.6f\n", 'Elapsed Time', (microtime(TRUE) - $start));
     printf("%-40s : %8d\n", 'Peak Memory Usage', memory_get_peak_usage());
     echo str_repeat('-', 52) . PHP_EOL;

@@ -13,7 +13,7 @@ if (!empty($_POST)) {
         str_contains($accept, ACCEPT_J) => $j($data),
         str_contains($accept, ACCEPT_H) => $h($data),
         str_contains($accept, ACCEPT_T) => $t($data),
-        default => 'Unsupported Type'
+        default => $t($data)
     };
     exit;
 }

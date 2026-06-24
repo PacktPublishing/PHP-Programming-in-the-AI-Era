@@ -1,6 +1,6 @@
 <?php
 namespace Library;
-require __DIR__ . '/../../src/Iterator/LargeFile.php';
+require __DIR__ . '/../../vendor/autoload.php';
 use Cookbook\Iterator\LargeFile;
 
 #[Library\buildArrays("Builds postcode => city, and postcode => [country, postcode, city, etc] for ~4000 entries from the GeoNames file")]
@@ -13,7 +13,7 @@ function buildArrays() : array
     $pos = $gap;
     $multi  = [];
     foreach ($iterator as $line) {
-        if ($pos-- > 0) {
+        if (--$pos > 0) {
             continue;   // skip $gap # lines
         } else {
             $pos = $gap;
@@ -21,7 +21,7 @@ function buildArrays() : array
         $line = trim($line);
         if (!empty($line)) {
             $row = str_getcsv($line, "\t");
-            $multi[$row[1]]  = $row;
+            if (isset($row[1])) $multi[$row[1]]  = $row;
         }
     }
     return $multi;
