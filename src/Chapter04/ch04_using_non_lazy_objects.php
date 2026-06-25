@@ -1,5 +1,5 @@
 <?php
-include __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/../../vendor/autoload.php';
 use Cookbook\Services\Container;
 use Cookbook\Services\Ipsum;
 $container = Container::getInstance();

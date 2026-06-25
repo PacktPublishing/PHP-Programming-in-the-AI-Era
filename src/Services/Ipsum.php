@@ -27,7 +27,7 @@ class Ipsum
         do {
             $tell = $this->obj->ftell();
             $line = $this->obj->fgets() ?? '';
-            $len = strlen($line);
+            $len = strlen($line);   // use mb_strlen() for multibyte input
             $line = trim($line);
         } while (!$this->obj->eof() && $len < $size);
         $paragraphs[] = $tell;  // get current offset
@@ -37,6 +37,7 @@ class Ipsum
                 $line = trim($this->obj->fgets() ?? '');
             } while (!$this->obj->eof() && empty($line));
             // look for line length >= $size
+            // use mb_strlen() for multibyte input
             while (!$this->obj->eof() && strlen($line) < $size) {
                 $tell = $this->obj->ftell();
                 $line = $this->obj->fgets() ?? '';

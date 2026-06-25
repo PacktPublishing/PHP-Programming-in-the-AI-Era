@@ -1,7 +1,6 @@
 <?php
 namespace Cookbook\Appointment;
 use PDO;
-use PDOStatement;
 use Cookbook\Appointment\Appointment;
 class ApptRepository
 {

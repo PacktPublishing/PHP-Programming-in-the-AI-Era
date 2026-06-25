@@ -22,7 +22,7 @@ class GenAiCache implements CacheInterface
     public const int DEFAULT_TTL = 604800;  // 1 week in seconds
     public const string FIND_SQL  = 'SELECT response,ttl_exp FROM %s WHERE cache_key = ?';
     public const string HAS_SQL   = 'SELECT count(cache_key) FROM %s WHERE cache_key = ?';
-    public const string SAVE_SQL  = 'INSERT INTO %s (cache_key, response, ttl_exp) VALUES (?,?, ?)';
+    public const string SAVE_SQL  = 'REPLACE INTO %s (cache_key, response, ttl_exp) VALUES (?,?, ?)';
     public const string DEL_SQL   = 'DELETE FROM %s WHERE cache_key = ?';
     public const string CLEAR_SQL = 'DELETE FROM %s';
     public function __construct(ContainerInterface $container)
@@ -39,12 +39,10 @@ class GenAiCache implements CacheInterface
         if (!empty($result)) {
             if ((int) $result['ttl_exp'] === 0) {
                 $value = $result['response'] ?? '';
+            } elseif ($result['ttl_exp'] < time()) {
+                $this->delete($key);
             } else {
-                if ($result['ttl_exp'] < time()) {
-                    $this->delete($key);
-                } else {
-                    $value = $result['response'] ?? '';
-                }
+                $value = $result['response'] ?? '';
             }
         }
         return $value;

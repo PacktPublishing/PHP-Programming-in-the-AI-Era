@@ -14,7 +14,7 @@ class Appointment
     public function extract(bool $insert = false) : array
     {
         $arr = get_object_vars($this);
-        if ($insert) array_shift($arr);
+        if ($insert) unset($arr['id']);
         return $arr;
     }
 }

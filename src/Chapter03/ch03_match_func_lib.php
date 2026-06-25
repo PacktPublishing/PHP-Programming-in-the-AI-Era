@@ -20,7 +20,9 @@ $x = function ($data) {
         $xml->text((string) $value);
         $xml->endElement();
     }
+    $xml->endDocument();
     $xml->endElement(); // Item
+    
     return $xml->outputMemory();
 };
 // JSON

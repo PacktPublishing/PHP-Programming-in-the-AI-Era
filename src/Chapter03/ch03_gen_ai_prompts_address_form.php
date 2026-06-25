@@ -382,6 +382,7 @@ function generateNameAddressForm($fieldAttrs, $countries, $formAction = '', $for
 {
     
     // Start building HTML
+    $formMethod = (strtoupper($formMethod) === 'POST') ? 'POST' : 'GET';
     $html = '<form action="' . $formAction . '" method="' . $formMethod . '" accept-charset="UTF-8">';
     
     // Loop through form elements and generate HTML for each

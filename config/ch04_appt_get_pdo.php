@@ -4,6 +4,6 @@ $config = [
     'db_usr'     => 'cookbook',
     'db_pwd'     => 'password',
     'db_host'    => 'mysql.local',
-    'options'    => [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
+    'db_opts'    => [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
 ];
 return new PDO($config['dsn'], $config['db_usr'], $config['db_pwd'], ($config['db_opts'] ?? null));

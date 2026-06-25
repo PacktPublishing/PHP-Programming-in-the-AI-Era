@@ -1,6 +1,6 @@
 <?php
 namespace Cookbook\Database;
-#[QueryBuilderBaseBaseBase(
+#[QueryBuilderBaseBase(
     "Builds an SQL query using OOP Builder pattern",
     "To create a prepared statement w/ placeholders, just supply the placeholders instead of values"
 )]
@@ -10,7 +10,7 @@ abstract class QueryBuilderBase
 	public string $prefix = '';
 	public array $where   = [];
 	public array $control = [];
-    #[QueryBuilderBaseBase\__construct(
+    #[QueryBuilderBase\__construct(
         "array \$cols : desired table columns",
         "string \$table : name of the table",
         "string \$quoteColChar : character used to quote columns",
@@ -23,17 +23,17 @@ abstract class QueryBuilderBase
         public string $quoteValChar = '\'') 
     {}
     protected abstract function quoteExp(string $a) : string;
-    #[QueryBuilderBaseBase\quoteCol("string \$a : column or table name to be quoted")]
+    #[QueryBuilderBase\quoteCol("string \$a : column or table name to be quoted")]
     protected function quoteCol(string $a) : string
     {
-        return (empty($a)) ? '' : $this->quoteColChar . $a . $this->quoteColChar;
+        return ($a === '') ? '' : $this->quoteColChar . $a . $this->quoteColChar;
     }
-    #[QueryBuilderBaseBase\quoteVal("string \$a : column or table name to be quoted")]
+    #[QueryBuilderBase\quoteVal("string \$a : column or table name to be quoted")]
     protected function quoteVal(string $a) : string
     {
-        return (empty($a)) ? '' : $this->quoteValChar . $a . $this->quoteValChar;
+        return ($a === '') ? '' : $this->quoteValChar . $a . $this->quoteValChar;
     }
-    #[QueryBuilderBaseBase\select("array \$cols : columns to return; if empty, returns all cols")]
+    #[QueryBuilderBase\select("array \$cols : columns to return; if empty, returns all cols")]
     public function select() : static
     {
         $this->sql = '';
@@ -47,7 +47,7 @@ abstract class QueryBuilderBase
         $this->prefix .= ' FROM ' . $this->quoteCol($this->table) . ' ';
 		return $this;
     }
-    #[QueryBuilderBaseBase\where("string \$a needs to take the form COL OPERATOR VALUE")]
+    #[QueryBuilderBase\where("string \$a needs to take the form COL OPERATOR VALUE")]
     public function where(string $a = '') : static
     {
         $this->where[0] = 'WHERE ' 
@@ -55,31 +55,31 @@ abstract class QueryBuilderBase
                         . ' ';
 		return $this;
     }
-    #[QueryBuilderBaseBase\and("string \$a needs to take the form COL OPERATOR VALUE")]
+    #[QueryBuilderBase\and("string \$a needs to take the form COL OPERATOR VALUE")]
     public function and(string $a = '') : static
     {
         $this->where[] = $this->exp($a, 'AND');
 		return $this;
     }
-    #[QueryBuilderBaseBase\or("string \$a needs to take the form COL OPERATOR VALUE")]
+    #[QueryBuilderBase\or("string \$a needs to take the form COL OPERATOR VALUE")]
     public function or(string $a = '') : static
     {
         $this->where[] = $this->exp($a, 'OR');
 		return $this;
     }
-    #[QueryBuilderBaseBase\not("string \$a needs to take the form COL OPERATOR VALUE")]
+    #[QueryBuilderBase\not("string \$a needs to take the form COL OPERATOR VALUE")]
     public function not(string $a = '')
     {
         $this->where[] = $this->exp($a, 'NOT');
 		return $this;
     }
-    #[QueryBuilderBaseBase\exp("string \$a needs to take the form COL OPERATOR VALUE",
+    #[QueryBuilderBase\exp("string \$a needs to take the form COL OPERATOR VALUE",
                        " string \$exp is AND, OR, NOT")]
     public function exp(string $a = '', string $exp = 'AND')
     {
         return ' ' . $exp . ' ' . (((empty($a)) ? '' : $this->quoteExp($a))) . ' ';
     }
-    #[QueryBuilderBaseBase\like("string \$a : COL", "string \$b : VALUE")]
+    #[QueryBuilderBase\like("string \$a : COL", "string \$b : VALUE")]
     public function like(string $a, string $b) : static
     {
         $this->where[] = $this->quoteCol($a) . ' LIKE ' . $this->quoteVal('%' . $b . '%') . ' ';

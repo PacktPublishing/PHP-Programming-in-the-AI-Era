@@ -22,7 +22,7 @@ function someScalarHint(bool $b, int $i, float $f, string $s)
                  'String',  $s);
 }
 
-function someBoolHint(bool $b)
+function someBoolHint(bool $b) : bool
 {
   return $b;
 }
