@@ -37,7 +37,7 @@ class IndexController extends AbstractController
     public function updateSrc(Request $request): Response
     {
         $data = $request->getContent('news_src') ?? self::DEFAULT_NEWS_SRC;
-        $_SESSION['news_src'] = strip_tags($data);
+        $_SESSION['news_src'] = strip_tags($data);  // consider using Symfony session handling instead
         return $this->json(['success' => true]);
     }
     #[Route('/api/news', name: 'app_news_api', methods: ['POST'])]
@@ -72,8 +72,9 @@ class IndexController extends AbstractController
                 $head = strip_tags($item['headline'] ?? 'No Headline');
                 $summ = strip_tags($item['summary'] ?? 'No Summary');
                 $html .= '<tr>';
-                $html .= '<td><a href="' . $link . '">' . $head . '</a></td>';
-                $html .= '<td>' . $summ . '</td>';
+                $html .= '<td><a href="' . htmlspecialchars($link) . '">';
+                $html .= htmlspecialchars($head) . '</a></td>';
+                $html .= '<td>' . htmlspecialchars($summ) . '</td>';
                 $html .= '</tr>';
             }
             $html .= '</table>';

@@ -24,4 +24,10 @@ class QueryBuilderWithPrep extends QueryBuilderBase
         $this->values[$col] = trim(implode(' ', $list ?? []));
         return $this->quoteCol($col) . ' ' . $op . ' :' . $col;
     }
+    #[QueryBuilderWithPrep\select("array \$cols : columns to return; if empty, returns all cols")]
+    public function select() : static
+    {
+        $this->values = [];
+        return parent::select();
+    }
 }

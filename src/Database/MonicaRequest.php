@@ -1,8 +1,6 @@
 <?php
 namespace Cookbook\Database;
-use PDO;
 use Exception;
-use DateInterval;
 use Psr\SimpleCache\CacheInterface;
 use Psr\Container\ContainerInterface;
 #[MonicaRequest("Processes GenAI request")]
